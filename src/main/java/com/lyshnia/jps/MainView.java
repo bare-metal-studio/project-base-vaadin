@@ -1,44 +1,68 @@
 package com.lyshnia.jps;
 
-import com.vaadin.flow.component.Key;
-import com.vaadin.flow.component.button.Button;
-import com.vaadin.flow.component.button.ButtonVariant;
+import com.lyshnia.jps.auth.AccessControl;
+import com.lyshnia.jps.auth.BasicAccessControl;
+import com.lyshnia.jps.navigation.drawer.NaviDrawer;
+import com.lyshnia.jps.navigation.drawer.NaviItem;
+import com.lyshnia.jps.navigation.drawer.NaviMenu;
+import com.vaadin.flow.component.applayout.AppLayout;
+import com.vaadin.flow.component.applayout.DrawerToggle;
 import com.vaadin.flow.component.dependency.CssImport;
-import com.vaadin.flow.component.notification.Notification;
-import com.vaadin.flow.component.orderedlayout.VerticalLayout;
-import com.vaadin.flow.component.textfield.TextField;
-import com.vaadin.flow.router.Route;
+import com.vaadin.flow.component.html.Image;
+import com.vaadin.flow.component.icon.VaadinIcon;
+import com.vaadin.flow.component.page.Viewport;
+import com.vaadin.flow.router.PageTitle;
+import com.vaadin.flow.router.RouterLayout;
 import com.vaadin.flow.server.PWA;
+import com.vaadin.flow.theme.Theme;
+import com.vaadin.flow.theme.lumo.Lumo;
+import retrofit2.Retrofit;
+import retrofit2.converter.gson.GsonConverterFactory;
 
 /**
  * The main view contains a button and a click listener.
  */
-@Route("")
-@PWA(name = "Project Base for Vaadin", shortName = "Project Base")
+@Theme(value = Lumo.class)
+@Viewport("width=device-width, minimum-scale=1, initial-scale=1, user-scalable=yes, viewport-fit=cover")
+@PageTitle("JPS Web")
+@PWA(name = "JPS Web", shortName = "JPS", iconPath = "icons/logo.png")
 @CssImport("./styles/shared-styles.css")
+@CssImport("./styles/lumo/shadow.css")
+@CssImport("./styles/lumo/spacing.css")
+@CssImport("./styles/lumo/typography.css")
+@CssImport("./styles/misc/box-shadow-borders.css")
+@CssImport(value = "./styles/styles.css", include = "lumo-badge")
 @CssImport(value = "./styles/vaadin-text-field-styles.css", themeFor = "vaadin-text-field")
-public class MainView extends VerticalLayout {
+public class MainView extends AppLayout implements RouterLayout {
+
+    public static Retrofit retrofit = new Retrofit.Builder()
+            .baseUrl("http://localhost:8077/")
+            .addConverterFactory(GsonConverterFactory.create())
+            .build();
+    AccessControl accessControl = new BasicAccessControl();
+    private NaviDrawer naviDrawer;
+    private NaviMenu menu;
 
     public MainView() {
-        // Use TextField for standard text input
-        TextField textField = new TextField("Your name");
+        Image img = new Image("images/logo-flat.png", "Flat Logo");
+        img.setHeight("44px");
+        addToNavbar(new DrawerToggle(), img);
+        naviDrawer = new NaviDrawer();
+        menu = naviDrawer.getMenu();
 
-        // Button click listeners can be defined as lambda expressions
-        GreetService greetService = new GreetService();
-        Button button = new Button("Say hello",
-                e -> Notification.show(greetService.greet(textField.getValue())));
+        menu.addNaviItem(VaadinIcon.HOME, "Home", HomeView.class);
+        NaviItem productManagement = menu.addNaviItem(VaadinIcon.LOCATION_ARROW, "Address Management",
+                null);
+        /*menu.addNaviItem(productManagement, "Manage Address", AddressView.class);
+        menu.addNaviItem(productManagement, "Add Address", NewAddressView.class);
 
-        // Theme variants give you predefined extra styles for components.
-        // Example: Primary button is more prominent look.
-        button.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
+        menu.addNaviItem(VaadinIcon.CASH, "Pricing Table", PricingView.class);
 
-        // You can specify keyboard shortcuts for buttons.
-        // Example: Pressing enter in this view clicks the Button.
-        button.addClickShortcut(Key.ENTER);
+        menu.addNaviItem(VaadinIcon.INFO_CIRCLE, "About", AboutView.class);
+*/
 
-        // Use custom CSS classes to apply styling. This is defined in shared-styles.css.
-        addClassName("centered-content");
+        menu.addNaviItem(VaadinIcon.EXIT, "Logout", Logout.class);
 
-        add(textField, button);
+        addToDrawer(menu);
     }
 }
