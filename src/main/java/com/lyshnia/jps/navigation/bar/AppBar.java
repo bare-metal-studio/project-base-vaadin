@@ -1,6 +1,7 @@
 package com.lyshnia.jps.navigation.bar;
 
 import com.lyshnia.jps.HomeView;
+import com.lyshnia.jps.Logout;
 import com.lyshnia.jps.navigation.tab.NaviTab;
 import com.lyshnia.jps.navigation.tab.NaviTabs;
 import com.lyshnia.jps.ui.FlexBoxLayout;
@@ -9,6 +10,7 @@ import com.lyshnia.jps.ui.util.UIUtils;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.ComponentEventListener;
 import com.vaadin.flow.component.HasValue;
+import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.contextmenu.ContextMenu;
@@ -115,8 +117,7 @@ public class AppBar extends FlexBoxLayout {
                 e -> Notification.show("Not implemented yet.", 3000,
                         Notification.Position.BOTTOM_CENTER));
         contextMenu.addItem("Log Out",
-                e -> Notification.show("Not implemented yet.", 3000,
-                        Notification.Position.BOTTOM_CENTER));
+                e -> UI.getCurrent().navigate(Logout.VIEW_NAME));
     }
 
     private void initActionItems() {
